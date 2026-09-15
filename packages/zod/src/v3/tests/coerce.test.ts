@@ -131,3 +131,24 @@ test("date coercion", () => {
   expect(() => schema.parse([])).toThrow(); // z.ZodError
   expect(schema.parse(new Date())).toBeInstanceOf(Date);
 });
+
+describe("z.coerce.number() NaN guard", () => {
+  it("should throw ZodError for string inputs that coerce to NaN", () => {
+    expect(() => z.coerce.number().parse("not-a-number")).toThrow(ZodError)
+  })
+
+  it("should throw ZodError for undefined input", () => {
+    expect(() => z.coerce.number().parse(undefined)).toThrow(ZodError)
+  })
+
+  it("should throw ZodError for object inputs that coerce to NaN", () => {
+    expect(() => z.coerce.number().parse({})).toThrow(ZodError)
+    expect(() => z.coerce.number().parse([])).toThrow(ZodError)
+  })
+
+  it("should respect .nan() opt-in: z.coerce.number().nan().parse('abc') → NaN", () => {
+    const result = z.coerce.number().nan().parse("not-a-number")
+    expect(typeof result).toBe("number")
+    ;(result === NaN || Number.isNaN(result)).shouldBe.ok()
+  })
+})

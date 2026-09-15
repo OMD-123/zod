@@ -1369,17 +1369,18 @@ export interface ZodNumberDef extends ZodTypeDef {
 export class ZodNumber extends ZodType<number, ZodNumberDef, number> {
   _parse(input: ParseInput): ParseReturnType<number> {
     if (this._def.coerce) {
-      const coerced = Number(input.data);
-      if (typeof input.data === "string" && Number.isNaN(coerced)) {
-        const ctx = this._getOrReturnCtx(input);
+      const coerced = Number(input.data)
+      // Guard on !this._def.nan preserves z.coerce.number().nan() opt-in semantics
+      if (Number.isNaN(coerced) && !this._def.nan) {
+        const ctx = this._getOrReturnCtx(input)
         addIssueToContext(ctx, {
           code: ZodIssueCode.invalid_type,
           expected: ZodParsedType.number,
           received: ctx.parsedType,
-        });
-        return INVALID;
+        })
+        return INVALID
       }
-      input.data = coerced;
+      input.data = coerced
     }
     const parsedType = this._getType(input);
     if (parsedType !== ZodParsedType.number) {
