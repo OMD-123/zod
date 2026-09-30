@@ -2505,7 +2505,7 @@ export const $ZodUnion: core.$constructor<$ZodUnion> = /*@__PURE__*/ core.$const
         results.push(result);
         async = true;
       } else {
-        if (result.issues.length === 0) return result;
+        if (result.issues.length === 0) {\n          payload.value = result.value;\n          return payload;\n        }
         results.push(result);
       }
     }
