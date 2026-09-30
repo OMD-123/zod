@@ -2431,7 +2431,7 @@ export interface $ZodUnion<T extends readonly SomeType[] = readonly $ZodType[]>
 
 function handleUnionResults(results: ParsePayload[], final: ParsePayload, inst: $ZodUnion, ctx?: ParseContext) {
   for (const result of results) {
-    if (result.issues.length === 0) {
+    if (result.issues.length === 0) {\n          payload.value = result.value;\n          return payload;\n        }
       final.value = result.value;
       return final;
     }
